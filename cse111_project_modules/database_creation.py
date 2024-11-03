@@ -91,6 +91,8 @@ unittable = '''
         ut_shopid VARCHAR(255) NOT NULL,
         ut_teamid VARCHAR(255) NOT NULL,
         ut_level VARCHAR(255) NOT NULL,
+        ut_health VARCHAR(255) NOT NULL,
+        ut_attack VARCHAR(255) NOT NULL
         
         PRIMARY KEY (ut_unitid),
         FOREIGN KEY (ut_shopid) REFERENCES shop(s_shopid) ON DELETE CASCADE,
