@@ -1,11 +1,9 @@
-import sqlite3
-from sqlite3 import Error
-
+import database_connection as conn
 usertable = '''
     CREATE TABLE IF NOT EXISTS user(
         u_username VARCHAR(255) NOT NULL,
         u_playerid VARCHAR(255) NOT NULL,
-        PRIMARY KEY (u_playerid)
+        PRIMARY KEY (u_playerid, u_username)
     )
 '''
 
@@ -20,7 +18,7 @@ passwordtable = '''
         p_hashedpassword VARCHAR(255) NOT NULL,
         p_salt VARCHAR(255) NOT NULL,
         
-        FOREIGN KEY (p_playerid) REFERENCES user(u_playerid)
+        FOREIGN KEY (p_playerid) REFERENCES user(u_playerid) ON DELETE CASCADE
     )   
 '''
 
@@ -35,7 +33,7 @@ teamtable = '''
         t_playerid VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (t_teamid),
-        FOREIGN KEY (t_playerid) REFERENCES user(u_playerid)
+        FOREIGN KEY (t_playerid) REFERENCES user(u_playerid) ON DELETE CASCADE
     )
 '''
 
@@ -50,8 +48,8 @@ gametable = '''
         g_player2id VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (g_gameid),
-        FOREIGN KEY (g_player1id) REFERENCES user(u_playerid),
-        FOREIGN KEY (g_player2id) REFERENCES user(u_playerid)
+        FOREIGN KEY (g_player1id) REFERENCES user(u_playerid) ON DELETE CASCADE,
+        FOREIGN KEY (g_player2id) REFERENCES user(u_playerid) ON DELETE CASCADE
     )    
 '''
 
@@ -64,7 +62,7 @@ turntable = '''
         tn_turnnumber VARCHAR(255) NOT NULL,
         tn_gameid VARCHAR(255) NOT NULL,
         
-        FOREIGN KEY (tn_gameid) REFERENCES game(g_gameid)
+        FOREIGN KEY (tn_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE
     )
 '''
 
@@ -78,7 +76,7 @@ shoptable = '''
         s_gameid VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (s_shopid),
-        FOREIGN KEY (s_gameid) REFERENCES shop(s_gameid)
+        FOREIGN KEY (s_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE
     )
 '''
 
@@ -95,8 +93,8 @@ unittable = '''
         ut_level VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (ut_unitid),
-        FOREIGN KEY (ut_shopid) REFERENCES shop(s_shopid),
-        FOREIGN KEY (ut_teamid) REFERENCES team(t_teamid)
+        FOREIGN KEY (ut_shopid) REFERENCES shop(s_shopid) ON DELETE CASCADE,
+        FOREIGN KEY (ut_teamid) REFERENCES team(t_teamid) ON DELETE CASCADE
     )
 '''
 
@@ -113,8 +111,8 @@ modifiertable = '''
         m_name VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (m_modifierid),
-        FOREIGN KEY (m_unitid) REFERENCES unit(ut_unitid),
-        FOREIGN KEY (m_shopid) REFERENCES shop(s_shopid)
+        FOREIGN KEY (m_unitid) REFERENCES unit(ut_unitid) ON DELETE CASCADE,
+        FOREIGN KEY (m_shopid) REFERENCES shop(s_shopid) ON DELETE CASCADE
     )
 '''
 dropmodifiertable = '''
@@ -124,20 +122,6 @@ dropmodifiertable = '''
 createtables = [usertable, passwordtable, teamtable, gametable, turntable, shoptable, unittable, modifiertable]
 droptables = [dropmodifiertable, dropunittable, dropshoptable, dropturntable, dropgametable, dropteamtable, droppasswordtable, dropusertable]
 
-def databaseConnection(database):
-    connection = None
-    try:
-        connection = sqlite3.connect(database)
-        return connection
-    except Error as e:
-        print(e)
-    
-    
-def closeConnection(connection):
-    try:
-        connection.close()
-    except Error as e:
-        print(e)
 
 def dropAllTables(connection):
     cursor = connection.cursor()
@@ -151,12 +135,11 @@ def createAllTables(connection):
         cursor.execute(query)
 
 def databaseReset():
-    database = r"cse111_project.sqlite"
-    connection = databaseConnection(database)
+    connection = conn.databaseConnection()
     with connection:
         dropAllTables(connection)
         createAllTables(connection)
-    closeConnection(connection)
+    conn.closeConnection(connection)
     
 if __name__ == '__main__':
     databaseReset()
