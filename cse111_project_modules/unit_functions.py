@@ -14,8 +14,6 @@ def createUnit(unitName, unitID, shopID, teamID, level, health, attack):
             VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
     
-    cursor.execute(unitquery, ())
-
     cursor.execute(unitquery, (unitName, unitid, shopID, teamID, level, health, attack))
 
 
