@@ -36,15 +36,20 @@ def updateUnit(unitID):
 
 
 
-def deleteUnit():
+def deleteUnit(unitID):
     connection = conn.databaseConnection()
-    conn.closeConnection(connection)
+    try:
+        cursor = connection.cursor()
+        deletequery = '''
+            DELETE FROM unit
+            WHERE ut_unitid = ?
+        '''
+        cursor.execute(deletequery, (unitID,))
+        connection.commit()
+    except Exception as e:
+        print(f"Error deleting unit: {e}")
+        connection.rollback()
+    finally:
+        conn.closeConnection(connection)
 
-    deletequery = '''
-            delete FROM unit(ut_name, ut_shopid, ut_teamid,
-            ut_level, ut_health, ut_attack)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-    '''
-
-    conn.commit()
     
