@@ -20,21 +20,31 @@ def createUnit(unitName, shopID, teamID, level, health, attack):
     connection.commit()
     conn.closeConnection(connection)
 
-def updateUnit(unitID):
+def updateUnit(unitID, unitName, shopID, teamID, level, health, attack):
     connection = conn.databaseConnection()
-    cursor = connection.cursor()
 
-    updatequery = '''
-            UPDATE unit(ut_name, ut_shopid, ut_teamid,
-            ut_level, ut_health, ut_attack)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+    try:
+        cursor = connection.cursor()
+        updatequery = '''
+            UPDATE unit
+            SET ut_name = ?, ut_shopid = ?, ut_teamid = ?, 
+                ut_level = ?, ut_health = ?, ut_attack = ?
+            WHERE ut_unitid = ?
         '''
 
-    cursor.execute(updatequery, (unitName, shopID, teamID, level, health, attack))
+        cursor.execute(updatequery, (unitName, shopID, teamID, level, health, attack, unitID))
+        connection.commit()
 
-    conn.commit()
+    except Exception as e:
+        print(e)
+        connection.rollback()
+
+    finally:
+        conn.closeConnection(connection)
 
 
+def findUnit():
+    ...
 
 def deleteUnit(unitID):
     connection = conn.databaseConnection()
@@ -47,9 +57,11 @@ def deleteUnit(unitID):
         cursor.execute(deletequery, (unitID,))
         connection.commit()
     except Exception as e:
-        print(f"Error deleting unit: {e}")
+        print(e)
         connection.rollback()
     finally:
         conn.closeConnection(connection)
+
+
 
     
