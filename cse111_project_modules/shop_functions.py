@@ -9,7 +9,7 @@ def createShop(gameID):
 
     shopquery = '''
         INSERT INTO shop(s_shopid, s_gameid)
-        VALUES(shopid,?)
+        VALUES(?,?)
     '''
 
     cursor.execute(shopquery, (shopid, gameID))
