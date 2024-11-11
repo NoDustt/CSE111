@@ -92,7 +92,7 @@ unittable = '''
         ut_teamid VARCHAR(255) NOT NULL,
         ut_level VARCHAR(255) NOT NULL,
         ut_health VARCHAR(255) NOT NULL,
-        ut_attack VARCHAR(255) NOT NULL
+        ut_attack VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (ut_unitid),
         FOREIGN KEY (ut_shopid) REFERENCES shop(s_shopid) ON DELETE CASCADE,
@@ -123,14 +123,14 @@ dropmodifiertable = '''
 
 createtables = [usertable, passwordtable, teamtable, gametable, turntable, shoptable, unittable, modifiertable]
 droptables = [dropmodifiertable, dropunittable, dropshoptable, dropturntable, dropgametable, dropteamtable, droppasswordtable, dropusertable]
-
-
+    
 def dropAllTables(connection):
     cursor = connection.cursor()
     for query in droptables:
         cursor.execute(query)
 
 def createAllTables(connection):
+    
     cursor = connection.cursor()
     
     for query in createtables:

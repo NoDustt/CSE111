@@ -15,6 +15,7 @@ def createTeam(teamName, playerID):
 
     connection.commit()
     conn.closeConnection(connection)
+    return teamID
 
 def editTeam(teamID, teamName, playerID):
     connection = conn.databaseConnection()

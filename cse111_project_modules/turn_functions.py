@@ -5,7 +5,7 @@ def createTurn(turnNumber, gameID):
     cursor = connection.cursor()
 
     turnquery = '''
-            INSERT INTO game(tn_turnnumber, tn_gameid)
+            INSERT INTO turn(tn_turnnumber, tn_gameid)
             VALUES (?, ?)
         '''
     cursor.execute(turnquery, (turnNumber, gameID))
