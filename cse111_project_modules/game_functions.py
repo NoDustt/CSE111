@@ -16,7 +16,7 @@ def createGame(player1ID, player2ID):
     connection.commit()
     conn.closeConnection(connection)
 
-def editTeam(gameID, player1ID, player2ID):
+def editGame(gameID, player1ID, player2ID):
     connection = conn.databaseConnection()
     try:
         cursor = connection.cursor()
@@ -37,7 +37,7 @@ def editTeam(gameID, player1ID, player2ID):
         conn.closeConnection(connection)
 
 
-def deleteTeam(teamID):
+def deleteGame(gameID):
     connection = conn.databaseConnection()
     try:
         cursor = connection.cursor()
@@ -45,7 +45,7 @@ def deleteTeam(teamID):
             DELETE FROM game
             WHERE g_gameid = ?
         '''
-        cursor.execute(deletequery, (gameID,))
+        cursor.execute(deletequery, (gameID))
         connection.commit()
     except Exception as e:
         print(e)
