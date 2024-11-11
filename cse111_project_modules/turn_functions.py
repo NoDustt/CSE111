@@ -16,5 +16,5 @@ def createTurn(turnNumber, gameID):
 def editTurn():
     ...
 
-def deleteTeam():
+def deleteTurn():
     ...
