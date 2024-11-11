@@ -1,32 +1,32 @@
 import database_connection as conn
 import uuid 
 
-def createGame(player1ID, player2ID):
+def createTeam(teamName, playerID):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
-    
-    gameID = str(uuid.uuid4())
 
-    gamequery = '''
-            INSERT INTO game(g_gameID, g_player1id, g_player2id)
+    teamID = str(uuid.uuid4())
+
+    teamquery = '''
+            INSERT INTO team(t_teamname, t_teamid, t_playerid)
             VALUES (?, ?, ?)
         '''
-    cursor.execute(gamequery, (gameID, player1ID, player2ID))
+    cursor.execute(teamquery, (teamName, teamID, playerID))
 
     connection.commit()
     conn.closeConnection(connection)
 
-def editTeam(gameID, player1ID, player2ID):
+def editTeam(teamID, teamName, playerID):
     connection = conn.databaseConnection()
     try:
         cursor = connection.cursor()
         updatequery = '''
-            UPDATE game
-            SET g_player1id = ?, g_player2id = ?
-            WHERE g_gameid = ?
+            UPDATE team
+            SET t_teamname = ?, t_teamid = ?
+            WHERE t_teamid = ?
         '''
 
-        cursor.execute(updatequery, (player1ID, player2ID))
+        cursor.execute(updatequery, (teamName, playerID))
         connection.commit()
 
     except Exception as e:
@@ -35,20 +35,20 @@ def editTeam(gameID, player1ID, player2ID):
 
     finally:
         conn.closeConnection(connection)
-
 
 def deleteTeam(teamID):
     connection = conn.databaseConnection()
     try:
         cursor = connection.cursor()
         deletequery = '''
-            DELETE FROM game
-            WHERE g_gameid = ?
+            DELETE FROM team
+            WHERE t_teamid = ?
         '''
-        cursor.execute(deletequery, (gameID,))
+        cursor.execute(deletequery, (teamID,))
         connection.commit()
     except Exception as e:
         print(e)
         connection.rollback()
     finally:
         conn.closeConnection(connection)
+
