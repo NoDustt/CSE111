@@ -30,8 +30,9 @@ if __name__ == "__main__":
     
     print("Lets look at the persepctive of User 1 Versus User 2!")
     print("Printing the current game shop:")
-    
-    
+    shopidG1 = shop.findShop(gameU1vsU2ID)[0]
+    units = unit.findUnit(shopidG1)
+    print(units)
     
     
     

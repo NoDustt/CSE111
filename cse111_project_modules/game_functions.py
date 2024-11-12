@@ -28,15 +28,33 @@ def createGame(player1ID, player2ID):
     teamID = str(uuid.uuid4())
     cursor.execute(teamquery, ("New Team", teamID, player2ID))
     
-    shopid = str(uuid.uuid4())
+    shopID = str(uuid.uuid4())
 
     shopquery = '''
         INSERT INTO shop(s_shopid, s_gameid)
         VALUES(?,?)
     '''
 
-    cursor.execute(shopquery, (shopid, gameID))
+    cursor.execute(shopquery, (shopID, gameID))
     
+    unitquery = '''
+            INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
+            ut_level, ut_health, ut_attack)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        '''
+        
+    sample_units = [
+        ("Warrior", "1", "100", "15"),
+        ("Archer", "1", "80", "20"),
+        ("Mage", "1", "70", "25"),
+        ("Knight", "1", "120", "10"),
+        ("Healer", "1", "90", "5"),
+    ]
+    for unit in sample_units:
+        unitid = str(uuid.uuid4())
+        unitName, level, health, attack = unit
+        cursor.execute(unitquery, (unitName, unitid, shopID, teamID, level, health, attack))
+        
     connection.commit()
     
     conn.closeConnection(connection)

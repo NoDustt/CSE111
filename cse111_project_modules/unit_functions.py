@@ -43,8 +43,23 @@ def updateUnit(unitID, unitName, shopID, teamID, level, health, attack):
         conn.closeConnection(connection)
 
 
-def findUnit():
-    ...
+def findUnit(shopID):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    try:
+        cursor = connection.cursor()
+        findUnitQuery = '''
+            SELECT ut_name, ut_level, ut_health, ut_attack FROM unit
+            WHERE ut_shopid = ?
+        '''
+        cursor.execute(findUnitQuery, (shopID,))
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error deleting unit: {e}")
+        connection.rollback()
+    finally:
+        conn.closeConnection(connection)
+            
 
 def deleteUnit(unitID):
     connection = conn.databaseConnection()

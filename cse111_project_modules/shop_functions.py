@@ -36,5 +36,20 @@ def deleteShop(shopID):
     finally:
         conn.closeConnection(connection)
 
-def findShop(shopID):
-    ...
+def findShop(gameID):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    try:
+        cursor = connection.cursor()
+        findshop = '''
+            SELECT s_shopid FROM shop
+            WHERE s_gameid = ?
+        '''
+        cursor.execute(findshop, (gameID,))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Error deleting unit: {e}")
+        connection.rollback()
+    finally:
+        conn.closeConnection(connection)
+            

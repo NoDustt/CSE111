@@ -15,6 +15,7 @@ def populateUnit():
     shopID = createShop()
     teamID = createTeam()
 
+    
     for unit in sample_units:
         unitName, level, health, attack = unit
         createUnit(unitName, shopID, teamID, level, health, attack)
