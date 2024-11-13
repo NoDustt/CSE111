@@ -19,6 +19,7 @@ def createUnit(unitName, shopID, teamID, level, health, attack):
 
     connection.commit()
     conn.closeConnection(connection)
+    return unitid
 
 def updateUnit(unitID, unitName, shopID, teamID, level, health, attack):
     connection = conn.databaseConnection()
