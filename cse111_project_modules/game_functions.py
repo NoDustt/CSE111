@@ -54,6 +54,25 @@ def createGame(player1ID, player2ID):
         unitid = str(uuid.uuid4())
         unitName, level, health, attack = unit
         cursor.execute(unitquery, (unitName, unitid, shopID, teamID, level, health, attack))
+
+    modifierquery = '''
+        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name)
+        VALUES (?, ?, ?, ?, ?)
+    '''
+
+    sample_modifiers = [
+    ("Mighty Boost", "Increases attack power by 10%"),
+    ("Stone Skin", "Reduces incoming damage by 15%"),
+    ("Swiftness", "Increases movement speed by 20%"),
+    ("Regen", "Restores 5 health per turn"),
+    ("Poison Touch", "Deals 5 poison damage per turn to enemies"),
+    ]       
+
+    for modifier in sample_modifiers:
+        modifierID = str(uuid.uuid4())
+        modifierName, effect = modifier
+        cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName))
+
         
     connection.commit()
     

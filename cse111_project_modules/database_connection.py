@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 
 def databaseConnection():
-    database = r"cse111_project.sqlite"
+    database = r"Checkpoint2-dbase.sqlite"
     connection = None
     try:
         connection = sqlite3.connect(database)
