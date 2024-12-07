@@ -1,7 +1,7 @@
 import database_connection as conn
 import uuid 
 
-def createModifier(unitID, shopID, effect, modifierName):
+def createModifier(unitID, shopID, effect, modifierName, attribute):
     connection = conn.databaseConnection()
 
     cursor = connection.cursor()
@@ -9,11 +9,11 @@ def createModifier(unitID, shopID, effect, modifierName):
     modifierID = str(uuid.uuid4())
 
     modifierquery = '''
-        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name, m_attribute)
+        VALUES (?, ?, ?, ?, ?, ?)
     '''
 
-    cursor.execute(modifierquery, (modifierID, unitID, shopID, effect, modifierName))
+    cursor.execute(modifierquery, (modifierID, unitID, shopID, effect, modifierName, attribute))
     connection.commit()
     conn.closeConnection(connection)
 
@@ -25,7 +25,7 @@ def editModifier(modifierID, unitID, shopID, effect, modifierName):
         modifierquery = '''
             UPDATE modifier
             SET m_unitid = ?, m_shopid = ?, m_effect = ?, 
-                m_name
+                m_name, m_attribute = ?
             WHERE m_modifierid = ?
         '''
 
