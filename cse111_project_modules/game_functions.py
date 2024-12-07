@@ -116,3 +116,17 @@ def deleteGame(gameID):
         connection.rollback()
     finally:
         conn.closeConnection(connection)
+
+def findUserGamers(userid):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    findquery = '''
+        SELECT g_gameid
+        FROM game
+        WHERE g_player1id = ?
+        OR g_player2id = ?
+    '''
+    cursor.execute(findquery, (userid, userid))
+    results = cursor.fetchall()
+    return results
+    

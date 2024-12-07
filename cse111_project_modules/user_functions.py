@@ -39,6 +39,42 @@ def createuser(username, password):
         return playerid
     return "user already exists"
 
+def create_user_with_id(username, password, playerid):
+    connection = conn.databaseConnection()
+    
+    cursor = connection.cursor()
+    
+    
+    checkusername = '''
+        SELECT * FROM user
+        WHERE u_username = ?  
+    '''
+    cursor.execute(checkusername, (username,))
+    result = cursor.fetchall()
+    if result == []:
+        userquery = '''
+            INSERT INTO user(u_username, u_playerid)
+            VALUES (?, ?)
+        '''
+        
+        values = (username, playerid)
+        cursor.execute(userquery, values)
+        connection.commit()
+        salt = bcrypt.gensalt()
+        hashedpassword = bcrypt.hashpw(password.encode("utf-8"), salt)
+        
+        passwordquery = '''
+            INSERT INTO password(p_username, p_playerid, p_hashedpassword, p_salt)
+            VALUES (?, ?, ?, ?)
+        '''
+        
+        cursor.execute(passwordquery, (username, playerid, hashedpassword, salt))
+        
+        connection.commit()
+        conn.closeConnection(connection)
+        return playerid
+    return -1
+
 def login(username, password):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
@@ -54,7 +90,7 @@ def login(username, password):
     if bcrypt.checkpw(password.encode("utf-8"), hashedpassword):
         print("user has successfully logged in")
         return userid
-    else: return 0
+    else: return -1
     
 if __name__ == '__main__':
     selector = input("Select 1 for creating a user, 2 to login as a user:")

@@ -148,3 +148,4 @@ WHERE ut_shopid = ?;
 -- Delete a unit by unit ID
 DELETE FROM unit
 WHERE ut_unitid = ?;
+
