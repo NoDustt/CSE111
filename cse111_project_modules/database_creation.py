@@ -109,8 +109,9 @@ modifiertable = '''
         m_modifierid VARCHAR(255) NOT NULL,
         m_unitid VARCHAR(255) NOT NULL,
         m_shopid VARCHAR(255) NOT NULL,
-        m_effect VARCHAR(255) NOT NULL,
+        m_effect INT NOT NULL,
         m_name VARCHAR(255) NOT NULL,
+        m_attribute TEXT NOT NULL, 
         
         PRIMARY KEY (m_modifierid),
         FOREIGN KEY (m_unitid) REFERENCES unit(ut_unitid) ON DELETE CASCADE,
