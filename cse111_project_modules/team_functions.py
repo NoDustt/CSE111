@@ -37,6 +37,30 @@ def editTeam(teamID, teamName, playerID):
     finally:
         conn.closeConnection(connection)
 
+
+def getTeam(teamID):
+    connection = conn.databaseConnection()
+    try:
+        cursor = connection.cursor()
+        getTeamquery = '''
+            SELECT ut_name, ut_level, ut_health, ut_attack
+            FROM unit
+            WHERE ut_teamid = ?
+        '''
+        cursor.execute(getTeamquery, (teamID,))
+        result = cursor.fetchall()
+
+        team_units = [{"name": row[0], "level": row[1], "health": row[2], "attack": row[3]} for row in result]
+        return team_units
+    except Exception as e:
+        print(f"Error fetching units for team {teamID}: {e}")
+        connection.rollback()
+        return []  
+
+    finally:
+        conn.closeConnection(connection)
+
+
 def deleteTeam(teamID):
     connection = conn.databaseConnection()
     try:
