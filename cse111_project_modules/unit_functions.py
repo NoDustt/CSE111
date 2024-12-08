@@ -50,7 +50,7 @@ def findUnit(shopID):
     try:
         cursor = connection.cursor()
         findUnitQuery = '''
-            SELECT ut_name, ut_level, ut_health, ut_attack FROM unit
+            SELECT ut_unitid, ut_name, ut_level, ut_health, ut_attack FROM unit
             WHERE ut_shopid = ?
         '''
         cursor.execute(findUnitQuery, (shopID,))
@@ -60,7 +60,24 @@ def findUnit(shopID):
         connection.rollback()
     finally:
         conn.closeConnection(connection)
-            
+
+def addUnitToTeam(teamID, unitID):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    try:
+        update_unit_query = '''
+            UPDATE unit
+            SET ut_teamid = ?
+            WHERE ut_unitid = ?
+        '''
+        cursor.execute(update_unit_query, (teamID, unitID))
+        connection.commit()
+        # print(f"Unit {unitID} successfully assigned to Team {teamID}.")
+    except Exception as e:
+        print(f"Error assigning unit to team: {e}")
+        connection.rollback()
+    finally:
+        conn.closeConnection(connection)
 
 def deleteUnit(unitID):
     connection = conn.databaseConnection()

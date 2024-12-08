@@ -1,7 +1,7 @@
 import database_connection as conn
 import uuid 
 
-def createTeam(teamName, playerID):
+def createTeam(teamName, playerID, teamID):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
 
@@ -11,7 +11,7 @@ def createTeam(teamName, playerID):
             INSERT INTO team(t_teamname, t_teamid, t_playerid)
             VALUES (?, ?, ?)
         '''
-    cursor.execute(teamquery, (teamName, teamID, playerID))
+    cursor.execute(teamquery, (teamName, teamID, playerID, teamID))
 
     connection.commit()
     conn.closeConnection(connection)
@@ -39,26 +39,42 @@ def editTeam(teamID, teamName, playerID):
 
 
 def getTeam(teamID):
-    connection = conn.databaseConnection()
+    connection = conn.databaseConnection()  
     try:
-        cursor = connection.cursor()
+        cursor = connection.cursor()  
         getTeamquery = '''
-            SELECT ut_name, ut_level, ut_health, ut_attack
+            SELECT ut_name, ut_level, ut_health, ut_attack, ut_unitid
             FROM unit
             WHERE ut_teamid = ?
-        '''
-        cursor.execute(getTeamquery, (teamID,))
-        result = cursor.fetchall()
+        '''  
+        cursor.execute(getTeamquery, (teamID,))  
+        result = cursor.fetchall()  
 
-        team_units = [{"name": row[0], "level": row[1], "health": row[2], "attack": row[3]} for row in result]
-        return team_units
-    except Exception as e:
-        print(f"Error fetching units for team {teamID}: {e}")
-        connection.rollback()
+        print("Your current team:")  
+        team_units = []  
+
+        for u in result:  
+            unit = {  
+                'name': u[0],   # First column is unit name
+                'level': u[1],  # Second column is unit level
+                'health': u[2], # Third column is unit health
+                'attack': u[3],  # Fourth column is unit attack
+                'id': u[4]
+            }
+            team_units.append(unit)  
+
+        for u in team_units:
+            print(f"Name: {u['name']}, Level: {u['level']}, Health: {u['health']}, Attack: {u['attack']}")
+
+
+        return team_units  
+    except Exception as e: 
+        print(f"Error fetching units for team {teamID}: {e}")  
+        connection.rollback()  
         return []  
+    finally:  
+        conn.closeConnection(connection)  
 
-    finally:
-        conn.closeConnection(connection)
 
 
 def deleteTeam(teamID):

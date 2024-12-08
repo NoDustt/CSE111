@@ -38,46 +38,44 @@ def createGame(player1ID, player2ID):
     cursor.execute(shopquery, (shopID, gameID))
     
     unitquery = '''
-            INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
-            ut_level, ut_health, ut_attack)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        '''
-        
+        INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
+                         ut_level, ut_health, ut_attack)
+        VALUES (?, ?, ?, NULL, ?, ?, ?)
+    '''
     sample_units = [
         ("Warrior", "1", "100", "15"),
         ("Archer", "1", "80", "20"),
         ("Mage", "1", "70", "25"),
         ("Knight", "1", "120", "10"),
-        ("Healer", "1", "90", "5"),
     ]
     for unit in sample_units:
         unitid = str(uuid.uuid4())
         unitName, level, health, attack = unit
-        cursor.execute(unitquery, (unitName, unitid, shopID, teamID, level, health, attack))
+        cursor.execute(unitquery, (unitName, unitid, shopID, level, health, attack))
+
 
     modifierquery = '''
-        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name, m_attribute)
+        VALUES (?, ?, ?, ?, ?, ?)
     '''
 
     sample_modifiers = [
-    ("Mighty Boost", "Increases attack power by 10%"),
-    ("Stone Skin", "Reduces incoming damage by 15%"),
-    ("Swiftness", "Increases movement speed by 20%"),
-    ("Regen", "Restores 5 health per turn"),
-    ("Poison Touch", "Deals 5 poison damage per turn to enemies"),
-    ]       
+    ("Health Boost I", 10, "HEALTH"),
+    ("Attack Boost I", 10, "ATTACK"),
+    ("Health Boost II", 20, "HEALTH"),
+    ("Attack Boost II", 20, "ATTACK"),
+]
 
     for modifier in sample_modifiers:
         modifierID = str(uuid.uuid4())
-        modifierName, effect = modifier
-        cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName))
+        modifierName, effect, attribute = modifier
+        cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName, attribute))
 
         
     connection.commit()
     
     conn.closeConnection(connection)
-    return gameID
+    return gameID, shopID, teamID
 
 def editGame(gameID, player1ID, player2ID):
     connection = conn.databaseConnection()
@@ -129,4 +127,6 @@ def findUserGamers(userid):
     cursor.execute(findquery, (userid, userid))
     results = cursor.fetchall()
     return results
+
+
     

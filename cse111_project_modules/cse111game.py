@@ -8,6 +8,111 @@ import unit_functions as unit
 import user_functions as user
 from getpass import getpass
 
+def playerTurn(userID, shopID, teamID, gameID):
+    print(f"\n=== {userID}'s Turn ===")
+    print("1. View Shop")
+    print("2. Buy Unit or Modifier")
+    print("3. View Your Team")
+    print("4. End Turn")
+
+    while True:
+        action = input("Choose an action (1-4): ")
+
+        if action == "1":
+            print("\nAvailable units in shop:")
+            units = unit.findUnit(shopID)  
+            for u in units:
+                print(f"Name: {u[1]}, Cost: {u[2]}, Health: {u[3]}, Attack: {u[4]}")
+            
+            print("\nAvailable modifiers in shop:")
+            modifiers = modifier.findModifier(shopID)  
+            for m in modifiers:
+                print(f"Name: {m[1]}, Effect: {m[2]} on {m[3]}")  # Modifier name, effect value, and attribute
+
+        elif action == "2":
+            print("1. Buy a Unit")
+            print("2. Buy a Modifier")
+            buy_choice = input("Choose an option (1-2): ")
+
+            if buy_choice == "1":
+                unit_name = input("Enter the unit name you want to purchase: ")
+                units = unit.findUnit(shopID)
+            
+                unitID = None
+                for u in units:
+                    if u[1] == unit_name:  
+                        unitID = u[0]  
+                        break
+                if unitID:
+                    print(f"Purchasing {unit_name}...")
+                    # Link the unitID to the player's teamID
+                    unit.addUnitToTeam(teamID, unitID)  
+        
+                    print(f"{unit_name} has been added to your team!")
+                else:
+                    print(f"Unit {unit_name} not found in the shop.")
+
+            elif buy_choice == "2":
+                modifier_name = input("Enter the modifier name you want to purchase: ")
+                modifiers = modifier.findModifier(shopID)  
+                modifier_to_buy = None
+                for m in modifiers:
+                    if m[1] == modifier_name: 
+                        modifier_to_buy = m
+                        break
+                
+                if modifier_to_buy:
+                    print(f"Purchasing {modifier_name}...")
+                    print("Select a unit to apply the modifier to:")
+                    team_units = team.getTeam(teamID)  # Get all units in the player's team
+
+                    unit_name_to_apply = input("Enter the unit name to apply the modifier to: ")
+                    selected_unit = None
+                    for u in team_units:
+                        if u['name'] == unit_name_to_apply: 
+                            selected_unit = u['id']
+                            break
+                    
+                    if selected_unit:
+                        print(f"Applying {modifier_name} to {unit_name_to_apply}...")
+                        unitID = selected_unit 
+                        modifier_effect = modifier_to_buy[2]  # Effect value
+                        modifier_attribute = modifier_to_buy[3]  # Attribute affected (health, attack)
+                        
+                        # Apply the modifier effect to the unit
+                        modifier.applyModifier(unitID, modifier_effect, modifier_attribute)
+                        print(f"{modifier_name} has been applied to {unit_name_to_apply}!")
+                    else:
+                        print(f"Unit {unit_name_to_apply} not found in your team.")
+                else:
+                    print(f"Modifier {modifier_name} not found in the shop.")
+
+        elif action == "3":
+            # Modify team
+            # print("Your current team:")
+            team_units = team.getTeam(teamID)  # Get the current team units
+
+            # print("Options: ")
+            # print("1. Sell a unit")
+            # print("2. Rearrange units")
+
+            team_action = input("Choose an action (1-2): ")
+
+            # if team_action == "1":
+            #     unit_to_sell = input("Enter the unit name to sell: ")
+            #     team.sellUnit(teamID, unit_to_sell)  # Implement selling logic
+            #     print(f"Sold unit {unit_to_sell}")
+
+            # elif team_action == "2":
+            #     print("Rearranging units...")
+            #     team.rearrangeUnits(teamID)  # Implement rearranging logic
+
+        elif action == "4":
+            print("Ending turn...")
+            break
+
+        else:
+            print("Invalid input. Please choose a valid option.")
 
 if __name__ == "__main__":
     print("Resetting database...\n\n")
@@ -53,13 +158,14 @@ if __name__ == "__main__":
                 selector = input("Please input what you would like to do.\n1: Create A New game\n3: Log out\nSelect what option you want to do: ")
             if int(selector) == 1:
                 print("Creating a new game...")
-                game.createGame(userid, 1)
+                gameID, shopID, teamID = game.createGame(userid, 1)
             if int(selector) == 2:
                 gameid = input("Please copy paste or enter the game you want to choose:\n")
                 gamesearch = (gameid,)
                 if gamesearch in results:
                     print("Now playing a game!")
                     playing = True
+                    playerTurn(userid, shopID, teamID, gameid)
             if int(selector) == 3:
                 print("Now logging out.")
                 loggedin = False
