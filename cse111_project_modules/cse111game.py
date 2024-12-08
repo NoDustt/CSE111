@@ -96,7 +96,7 @@ def playerTurn(userID, shopID, teamID, gameID):
             # print("1. Sell a unit")
             # print("2. Rearrange units")
 
-            team_action = input("Choose an action (1-2): ")
+            # team_action = input("Choose an action (1-2): ")
 
             # if team_action == "1":
             #     unit_to_sell = input("Enter the unit name to sell: ")

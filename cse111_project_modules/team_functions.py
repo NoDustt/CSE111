@@ -59,7 +59,7 @@ def getTeam(teamID):
                 'level': u[1],  # Second column is unit level
                 'health': u[2], # Third column is unit health
                 'attack': u[3],  # Fourth column is unit attack
-                'id': u[4]
+                'id': u[4] # Firth column is unit id
             }
             team_units.append(unit)  
 
