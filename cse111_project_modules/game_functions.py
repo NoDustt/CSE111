@@ -48,7 +48,10 @@ def createGame(player1ID, player2ID):
         ("Archer", "1", "80", "20"),
         ("Mage", "1", "70", "25"),
         ("Knight", "1", "120", "10"),
-        ("Healer", "1", "90", "5"),
+        ("Advanced Archer", "3", "90", "40"),
+        ("Advanced Warrior", "3", "120", "45"),
+        ("Advanced Mage", "2", "80", "65"),
+        ("Advanced Knight", "5", "200", "10")
     ]
     for unit in sample_units:
         unitid = str(uuid.uuid4())
