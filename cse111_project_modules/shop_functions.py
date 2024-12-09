@@ -1,18 +1,18 @@
 import database_connection as conn
 import uuid 
 
-def createShop(gameID):
+def createShop(gameID, turnID):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
 
     shopid = str(uuid.uuid4())
 
     shopquery = '''
-        INSERT INTO shop(s_shopid, s_gameid)
-        VALUES(?,?)
+        INSERT INTO shop(s_shopid, s_gameid, s_turnid)
+        VALUES(?,?,?)
     '''
 
-    cursor.execute(shopquery, (shopid, gameID))
+    cursor.execute(shopquery, (shopid, gameID, turnID))
     connection.commit()
     conn.closeConnection(connection)
 

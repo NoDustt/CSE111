@@ -1,17 +1,17 @@
 import database_connection as conn
 import uuid 
 
-def createTeam(teamName, playerID, teamID):
+def createTeam(teamName, playerID, teamID, turnnumber):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
 
     teamID = str(uuid.uuid4())
 
     teamquery = '''
-            INSERT INTO team(t_teamname, t_teamid, t_playerid)
-            VALUES (?, ?, ?)
+            INSERT INTO team(t_teamname, t_teamid, t_playerid, t_turnnumber)
+            VALUES (?, ?, ?, ?)
         '''
-    cursor.execute(teamquery, (teamName, teamID, playerID, teamID))
+    cursor.execute(teamquery, (teamName, teamID, playerID, teamID, turnnumber))
 
     connection.commit()
     conn.closeConnection(connection)
@@ -43,7 +43,7 @@ def getTeam(teamID):
     try:
         cursor = connection.cursor()  
         getTeamquery = '''
-            SELECT ut_name, ut_level, ut_health, ut_attack, ut_unitid
+            SELECT ut_name, ut_health, ut_attack, ut_unitid
             FROM unit
             WHERE ut_teamid = ?
         '''  
@@ -56,15 +56,14 @@ def getTeam(teamID):
         for u in result:  
             unit = {  
                 'name': u[0],   # First column is unit name
-                'level': u[1],  # Second column is unit level
-                'health': u[2], # Third column is unit health
-                'attack': u[3],  # Fourth column is unit attack
-                'id': u[4] # Firth column is unit id
+                'health': u[1], # Third column is unit health
+                'attack': u[2],  # Fourth column is unit attack
+                'id': u[3] # Firth column is unit id
             }
             team_units.append(unit)  
 
         for u in team_units:
-            print(f"Name: {u['name']}, Level: {u['level']}, Health: {u['health']}, Attack: {u['attack']}")
+            print(f"Name: {u['name']}, Health: {u['health']}, Attack: {u['attack']}")
 
 
         return team_units  
@@ -93,3 +92,37 @@ def deleteTeam(teamID):
     finally:
         conn.closeConnection(connection)
 
+def getPlayerTeam(userID, gameID):
+    
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    
+    query = '''
+        SELECT ut_name, ut_health, ut_attack, ut_unitid
+        FROM unit
+        INNER JOIN team
+        ON ut_teamid = t_teamid
+        WHERE t_playerid = ?
+        AND t_gameid = ?
+    '''
+    
+    cursor.execute(query, (userID, gameID))
+    
+    result = cursor.fetchall()
+    print("Your opponents team")
+    team_units = []  
+
+    for u in result:  
+        unit = {  
+            'name': u[0],   # First column is unit name
+            'health': u[1], # Third column is unit health
+            'attack': u[2],  # Fourth column is unit attack
+            'id': u[3] # Firth column is unit id
+        }
+        team_units.append(unit)  
+
+    for u in team_units:
+        print(f"Name: {u['name']}, Health: {u['health']}, Attack: {u['attack']}")
+
+
+    return team_units  

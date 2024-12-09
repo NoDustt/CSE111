@@ -17,8 +17,8 @@ def populateUnit():
 
     
     for unit in sample_units:
-        unitName, level, health, attack = unit
-        createUnit(unitName, shopID, teamID, level, health, attack)
+        unitName, gold, health, attack = unit
+        createUnit(unitName, shopID, teamID, gold, health, attack)
 
 
 if __name__ == "__main__":

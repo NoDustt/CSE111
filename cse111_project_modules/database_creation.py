@@ -3,6 +3,9 @@ usertable = '''
     CREATE TABLE IF NOT EXISTS user(
         u_username VARCHAR(255) NOT NULL,
         u_playerid VARCHAR(255) NOT NULL,
+        u_wins VARCHAR(255) DEFAULT 0,
+        u_losses VARCHAR(255) DEFAULT 0,
+        u_games VARCHAR(255) DEFAULT 0,
         PRIMARY KEY (u_playerid, u_username)
     )
 '''
@@ -31,9 +34,13 @@ teamtable = '''
         t_teamname VARCHAR(255) NOT NULL,
         t_teamid VARCHAR(255) NOT NULL,
         t_playerid VARCHAR(255) NOT NULL,
+        t_turnnumber VARCHAR(255) NOT NULL,
+        t_gameid VARCHAR(255) NOT NULL,
         
         PRIMARY KEY (t_teamid),
-        FOREIGN KEY (t_playerid) REFERENCES user(u_playerid) ON DELETE CASCADE
+        FOREIGN KEY (t_playerid) REFERENCES user(u_playerid) ON DELETE CASCADE,
+        FOREIGN KEY (t_turnnumber) REFERENCES turn(tn_turnnumber) ON DELETE CASCADE,
+        FOREIGN KEY (t_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE
     )
 '''
 
@@ -61,7 +68,7 @@ turntable = '''
     CREATE TABLE IF NOT EXISTS turn(
         tn_turnnumber VARCHAR(255) NOT NULL,
         tn_gameid VARCHAR(255) NOT NULL,
-        
+        tn_gold VARCHAR(255) DEFAULT 3,
         FOREIGN KEY (tn_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE
     )
 '''
@@ -74,9 +81,10 @@ shoptable = '''
     CREATE TABLE IF NOT EXISTS shop(
         s_shopid VARCHAR(255) NOT NULL,
         s_gameid VARCHAR(255) NOT NULL,
-        
+        s_turnid VARCHAR(255) NOT NULL,
         PRIMARY KEY (s_shopid),
-        FOREIGN KEY (s_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE
+        FOREIGN KEY (s_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE,
+        FOREIGN KEY (s_turnid) REFERENCES turn(tn_turnid) ON DELETE CASCADE
     )
 '''
 
@@ -90,7 +98,7 @@ unittable = '''
         ut_unitid VARCHAR(255) NOT NULL,
         ut_shopid VARCHAR(255) NOT NULL,
         ut_teamid VARCHAR(255),
-        ut_level VARCHAR(255) NOT NULL,
+        ut_gold VARCHAR(255) NOT NULL,
         ut_health VARCHAR(255) NOT NULL,
         ut_attack VARCHAR(255) NOT NULL,
         

@@ -21,25 +21,25 @@ def createGame(player1ID, player2ID):
     teamID = str(uuid.uuid4())
 
     teamquery = '''
-            INSERT INTO team(t_teamname, t_teamid, t_playerid)
-            VALUES (?, ?, ?)
+            INSERT INTO team(t_teamname, t_teamid, t_playerid, t_turnnumber, t_gameid)
+            VALUES (?, ?, ?, ?, ?)
         '''
-    cursor.execute(teamquery, ("New Team", teamID, player1ID))
+    cursor.execute(teamquery, ("New Team", teamID, player1ID, 1, gameID))
     teamID = str(uuid.uuid4())
-    cursor.execute(teamquery, ("New Team", teamID, player2ID))
+    cursor.execute(teamquery, ("New Team", teamID, player2ID, 1, gameID))
     
     shopID = str(uuid.uuid4())
 
     shopquery = '''
-        INSERT INTO shop(s_shopid, s_gameid)
-        VALUES(?,?)
+        INSERT INTO shop(s_shopid, s_gameid, s_turnid)
+        VALUES(?,?,?)
     '''
 
-    cursor.execute(shopquery, (shopID, gameID))
+    cursor.execute(shopquery, (shopID, gameID, 1))
     
     unitquery = '''
         INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
-                         ut_level, ut_health, ut_attack)
+                         ut_gold, ut_health, ut_attack)
         VALUES (?, ?, ?, NULL, ?, ?, ?)
     '''
     sample_units = [
@@ -50,8 +50,8 @@ def createGame(player1ID, player2ID):
     ]
     for unit in sample_units:
         unitid = str(uuid.uuid4())
-        unitName, level, health, attack = unit
-        cursor.execute(unitquery, (unitName, unitid, shopID, level, health, attack))
+        unitName, gold, health, attack = unit
+        cursor.execute(unitquery, (unitName, unitid, shopID, gold, health, attack))
 
 
     modifierquery = '''
@@ -129,4 +129,8 @@ def findUserGamers(userid):
     return results
 
 
+def getGameHistory(gameid):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    
     

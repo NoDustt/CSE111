@@ -1,7 +1,7 @@
 import database_connection as conn
 import uuid 
 
-def createUnit(unitName, shopID, teamID, level, health, attack):
+def createUnit(unitName, shopID, teamID, gold, health, attack):
     connection = conn.databaseConnection()
 
     cursor = connection.cursor()
@@ -10,18 +10,18 @@ def createUnit(unitName, shopID, teamID, level, health, attack):
 
     unitquery = '''
             INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
-            ut_level, ut_health, ut_attack)
+            ut_gold, ut_health, ut_attack)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
     
-    cursor.execute(unitquery, (unitName, unitid, shopID, teamID, level, health, attack))
+    cursor.execute(unitquery, (unitName, unitid, shopID, teamID, gold, health, attack))
 
 
     connection.commit()
     conn.closeConnection(connection)
     return unitid
 
-def updateUnit(unitID, unitName, shopID, teamID, level, health, attack):
+def updateUnit(unitID, unitName, shopID, teamID, gold, health, attack):
     connection = conn.databaseConnection()
 
     try:
@@ -29,11 +29,11 @@ def updateUnit(unitID, unitName, shopID, teamID, level, health, attack):
         updatequery = '''
             UPDATE unit
             SET ut_name = ?, ut_shopid = ?, ut_teamid = ?, 
-                ut_level = ?, ut_health = ?, ut_attack = ?
+                ut_gold = ?, ut_health = ?, ut_attack = ?
             WHERE ut_unitid = ?
         '''
 
-        cursor.execute(updatequery, (unitName, shopID, teamID, level, health, attack, unitID))
+        cursor.execute(updatequery, (unitName, shopID, teamID, gold, health, attack, unitID))
         connection.commit()
 
     except Exception as e:
@@ -44,16 +44,20 @@ def updateUnit(unitID, unitName, shopID, teamID, level, health, attack):
         conn.closeConnection(connection)
 
 
-def findUnit(shopID):
+def findUnit(shopID, gold):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
     try:
+        
         cursor = connection.cursor()
+        
         findUnitQuery = '''
-            SELECT ut_unitid, ut_name, ut_level, ut_health, ut_attack FROM unit
+            SELECT ut_unitid, ut_name, ut_gold, ut_health, ut_attack FROM unit
             WHERE ut_shopid = ?
+            AND ut_teamid IS NULL
+            AND ut_gold <= ?
         '''
-        cursor.execute(findUnitQuery, (shopID,))
+        cursor.execute(findUnitQuery, (shopID, gold))
         return cursor.fetchall()
     except Exception as e:
         print(f"Error deleting unit: {e}")
@@ -72,6 +76,7 @@ def addUnitToTeam(teamID, unitID):
         '''
         cursor.execute(update_unit_query, (teamID, unitID))
         connection.commit()
+        
         # print(f"Unit {unitID} successfully assigned to Team {teamID}.")
     except Exception as e:
         print(f"Error assigning unit to team: {e}")

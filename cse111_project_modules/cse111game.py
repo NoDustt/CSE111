@@ -9,7 +9,10 @@ import user_functions as user
 from getpass import getpass
 
 def playerTurn(userID, shopID, teamID, gameID):
-    print(f"\n=== {userID}'s Turn ===")
+    turnNumber = int(turn.findLatestTurn(gameID)[0][0])
+    gold = int(turn.getGold(gameID, turnNumber)[0][0])
+    print(f"Current Turn: {turnNumber}")
+    print(f"\n=== Your Turn ===")
     print("1. View Shop")
     print("2. Buy Unit or Modifier")
     print("3. View Your Team")
@@ -20,7 +23,7 @@ def playerTurn(userID, shopID, teamID, gameID):
 
         if action == "1":
             print("\nAvailable units in shop:")
-            units = unit.findUnit(shopID)  
+            units = unit.findUnit(shopID, 10)  
             for u in units:
                 print(f"Name: {u[1]}, Cost: {u[2]}, Health: {u[3]}, Attack: {u[4]}")
             
@@ -28,7 +31,7 @@ def playerTurn(userID, shopID, teamID, gameID):
             modifiers = modifier.findModifier(shopID)  
             for m in modifiers:
                 print(f"Name: {m[1]}, Effect: {m[2]} on {m[3]}")  # Modifier name, effect value, and attribute
-
+            print(f"You have {gold} gold.")
         elif action == "2":
             print("1. Buy a Unit")
             print("2. Buy a Modifier")
@@ -36,7 +39,7 @@ def playerTurn(userID, shopID, teamID, gameID):
 
             if buy_choice == "1":
                 unit_name = input("Enter the unit name you want to purchase: ")
-                units = unit.findUnit(shopID)
+                units = unit.findUnit(shopID, gold)
             
                 unitID = None
                 for u in units:
@@ -49,6 +52,7 @@ def playerTurn(userID, shopID, teamID, gameID):
                     unit.addUnitToTeam(teamID, unitID)  
         
                     print(f"{unit_name} has been added to your team!")
+                    gold = max(gold-1, 0)
                 else:
                     print(f"Unit {unit_name} not found in the shop.")
 
@@ -109,10 +113,20 @@ def playerTurn(userID, shopID, teamID, gameID):
 
         elif action == "4":
             print("Ending turn...")
+            fightingTurn(userID, gameID, teamID)
             break
 
         else:
             print("Invalid input. Please choose a valid option.")
+
+def fightingTurn(userID, gameID, teamID):
+    print("Currently fighting...")
+    print("Your team: ")
+    team.getTeam(teamID)
+    print("Enemy team: ")
+    team.getPlayerTeam(userID, gameID)
+    print("You won!")
+    print("Current wins: 1/3")
 
 if __name__ == "__main__":
     print("Resetting database...\n\n")
