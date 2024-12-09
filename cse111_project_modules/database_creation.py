@@ -89,7 +89,7 @@ unittable = '''
         ut_name VARCHAR(255) NOT NULL, 
         ut_unitid VARCHAR(255) NOT NULL,
         ut_shopid VARCHAR(255) NOT NULL,
-        ut_teamid VARCHAR(255) NOT NULL,
+        ut_teamid VARCHAR(255),
         ut_level VARCHAR(255) NOT NULL,
         ut_health VARCHAR(255) NOT NULL,
         ut_attack VARCHAR(255) NOT NULL,
