@@ -65,7 +65,7 @@ def findUnit(shopID, gold):
     finally:
         conn.closeConnection(connection)
 
-def addUnitToTeam(teamID, unitID):
+def addUnitToTeam(teamID, unitID, gameID, userID):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
     try:
@@ -77,6 +77,19 @@ def addUnitToTeam(teamID, unitID):
         cursor.execute(update_unit_query, (teamID, unitID))
         connection.commit()
         
+        cost_query = '''
+            SELECT ut_gold FROM unit WHERE ut_unitid = ?
+        '''
+        cost = int(cursor.execute(cost_query, (unitID,)).fetchone()[0][0])
+        
+        update_team_query = '''
+            UPDATE turn
+            SET tn_gold = tn_gold - ?
+            WHERE tn_gameid = ?
+            AND tn_userid = ?
+        '''
+        cursor.execute(update_team_query, (cost, gameID, userID))
+        connection.commit()
         # print(f"Unit {unitID} successfully assigned to Team {teamID}.")
     except Exception as e:
         print(f"Error assigning unit to team: {e}")

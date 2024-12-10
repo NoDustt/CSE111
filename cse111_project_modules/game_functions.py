@@ -13,11 +13,11 @@ def createGame(player1ID, player2ID):
         '''
     cursor.execute(gamequery, (gameID, player1ID, player2ID))
     turnquery = '''
-            INSERT INTO turn(tn_turnnumber, tn_gameid)
-            VALUES (?, ?)
+            INSERT INTO turn(tn_turnnumber, tn_gameid, tn_userid)
+            VALUES (?, ?, ?)
         '''
-    cursor.execute(turnquery, (1, gameID))
-    
+    cursor.execute(turnquery, (1, gameID, player1ID))
+    cursor.execute(turnquery, (1, gameID, player2ID))
     teamID = str(uuid.uuid4())
 
     teamquery = '''

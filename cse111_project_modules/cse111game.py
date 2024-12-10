@@ -10,7 +10,7 @@ from getpass import getpass
 
 def playerTurn(userID, shopID, teamID, gameID):
     turnNumber = int(turn.findLatestTurn(gameID)[0][0])
-    gold = int(turn.getGold(gameID, turnNumber)[0][0])
+    
     print(f"Current Turn: {turnNumber}")
     print(f"\n=== Your Turn ===")
     print("1. View Shop")
@@ -20,7 +20,7 @@ def playerTurn(userID, shopID, teamID, gameID):
 
     while True:
         action = input("Choose an action (1-4): ")
-
+        gold = int(turn.getGold(gameID, turnNumber)[0][0])
         if action == "1":
             print("\nAvailable units in shop:")
             units = unit.findUnit(shopID, 10)  
@@ -49,10 +49,9 @@ def playerTurn(userID, shopID, teamID, gameID):
                 if unitID:
                     print(f"Purchasing {unit_name}...")
                     # Link the unitID to the player's teamID
-                    unit.addUnitToTeam(teamID, unitID)  
+                    unit.addUnitToTeam(teamID, unitID, gameID, userID)  
         
                     print(f"{unit_name} has been added to your team!")
-                    gold = max(gold-1, 0)
                 else:
                     print(f"Unit {unit_name} not found in the shop.")
 

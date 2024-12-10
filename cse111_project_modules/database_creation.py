@@ -69,7 +69,9 @@ turntable = '''
         tn_turnnumber VARCHAR(255) NOT NULL,
         tn_gameid VARCHAR(255) NOT NULL,
         tn_gold VARCHAR(255) DEFAULT 3,
-        FOREIGN KEY (tn_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE
+        tn_userid VARCHAR(255) NOT NULL,
+        FOREIGN KEY (tn_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE,
+        FOREIGN KEY (tn_userid) REFERENCES user(u_userid) ON DELETE CASCADE
     )
 '''
 
