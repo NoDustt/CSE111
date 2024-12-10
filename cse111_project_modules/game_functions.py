@@ -31,11 +31,13 @@ def createGame(player1ID, player2ID):
     shopID = str(uuid.uuid4())
 
     shopquery = '''
-        INSERT INTO shop(s_shopid, s_gameid, s_turnid, s_playerid)
+        INSERT INTO shop(s_shopid, s_gameid, s_turnid, s_userid)
         VALUES(?,?,?,?)
     '''
 
     cursor.execute(shopquery, (shopID, gameID, 1, player1ID))
+    shopID = str(uuid.uuid4())
+    cursor.execute(shopquery, (shopID, gameID, 1, player2ID))
     
     unitquery = '''
         INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,

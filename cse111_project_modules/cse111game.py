@@ -123,10 +123,8 @@ def fightingTurn(userID, gameID, teamID):
     print("Currently fighting...")
     print("Your team: ")
     team.getTeam(teamID)
-    print("Enemy team: ")
     team.getPlayerTeam(userID, gameID)
-    print("You won!")
-    print("Current wins: 1/3")
+    
 
 if __name__ == "__main__":
     print("Resetting database...\n\n")
