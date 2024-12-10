@@ -30,7 +30,7 @@ def playerTurn(userID, shopID, teamID, gameID):
             print("\nAvailable modifiers in shop:")
             modifiers = modifier.findModifier(shopID)  
             for m in modifiers:
-                print(f"Name: {m[1]}, Effect: {m[2]} on {m[3]}")  # Modifier name, effect value, and attribute
+                print(f"Name: {m[1]}, Effect: {m[2]} on {m[3]} Cost: {m[4]}")  # Modifier name, effect value, and attribute
             print(f"You have {gold} gold.")
         elif action == "2":
             print("1. Buy a Unit")
@@ -49,7 +49,7 @@ def playerTurn(userID, shopID, teamID, gameID):
                 if unitID:
                     print(f"Purchasing {unit_name}...")
                     # Link the unitID to the player's teamID
-                    unit.addUnitToTeam(teamID, unitID, gameID, userID)  
+                    unit.addUnitToTeam(teamID, unitID, gameID, userID, turnNumber)  
         
                     print(f"{unit_name} has been added to your team!")
                 else:
@@ -81,9 +81,10 @@ def playerTurn(userID, shopID, teamID, gameID):
                         unitID = selected_unit 
                         modifier_effect = modifier_to_buy[2]  # Effect value
                         modifier_attribute = modifier_to_buy[3]  # Attribute affected (health, attack)
+                        cost = modifier_to_buy[4]
                         
                         # Apply the modifier effect to the unit
-                        modifier.applyModifier(unitID, modifier_effect, modifier_attribute)
+                        modifier.applyModifier(unitID, modifier_effect, modifier_attribute, cost, gameID, userID, turnNumber)
                         print(f"{modifier_name} has been applied to {unit_name_to_apply}!")
                     else:
                         print(f"Unit {unit_name_to_apply} not found in your team.")

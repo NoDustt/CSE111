@@ -84,9 +84,11 @@ shoptable = '''
         s_shopid VARCHAR(255) NOT NULL,
         s_gameid VARCHAR(255) NOT NULL,
         s_turnid VARCHAR(255) NOT NULL,
+        s_userid VARCHAR(255) NOT NULL,
         PRIMARY KEY (s_shopid),
         FOREIGN KEY (s_gameid) REFERENCES game(g_gameid) ON DELETE CASCADE,
-        FOREIGN KEY (s_turnid) REFERENCES turn(tn_turnid) ON DELETE CASCADE
+        FOREIGN KEY (s_turnid) REFERENCES turn(tn_turnid) ON DELETE CASCADE,
+        FOREIGN KEY (s_userid) REFERENCES user(u_userid) ON DELETE CASCADE
     )
 '''
 
@@ -122,6 +124,7 @@ modifiertable = '''
         m_effect INT NOT NULL,
         m_name VARCHAR(255) NOT NULL,
         m_attribute TEXT NOT NULL, 
+        m_cost VARCHAR(255),
         
         PRIMARY KEY (m_modifierid),
         FOREIGN KEY (m_unitid) REFERENCES unit(ut_unitid) ON DELETE CASCADE,

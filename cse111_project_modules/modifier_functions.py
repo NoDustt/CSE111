@@ -1,7 +1,7 @@
 import database_connection as conn
 import uuid 
 
-def createModifier(unitID, shopID, effect, modifierName, attribute):
+def createModifier(unitID, shopID, effect, modifierName, attribute, cost):
     connection = conn.databaseConnection()
 
     cursor = connection.cursor()
@@ -9,11 +9,11 @@ def createModifier(unitID, shopID, effect, modifierName, attribute):
     modifierID = str(uuid.uuid4())
 
     modifierquery = '''
-        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name, m_attribute)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name, m_attribute, m_cost)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     '''
 
-    cursor.execute(modifierquery, (modifierID, unitID, shopID, effect, modifierName, attribute))
+    cursor.execute(modifierquery, (modifierID, unitID, shopID, effect, modifierName, attribute, cost))
     connection.commit()
     conn.closeConnection(connection)
 
@@ -45,7 +45,7 @@ def findModifier(shopID):
 
     try:
         findModifierQuery = '''
-            SELECT m_modifierid, m_name, m_effect, m_attribute
+            SELECT m_modifierid, m_name, m_effect, m_attribute, m_cost
             FROM modifier
             WHERE m_shopid = ?
         '''
@@ -57,7 +57,7 @@ def findModifier(shopID):
     finally:
         conn.closeConnection(connection)
 
-def applyModifier(unitID, effect, attribute):
+def applyModifier(unitID, effect, attribute, cost, gameID, userID, turnnumber):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
 
@@ -82,6 +82,17 @@ def applyModifier(unitID, effect, attribute):
         cursor.execute(applyquery, (effect, unitID))
         connection.commit()
         print(f"Applied {effect} to {attribute} for unit {unitID}.")
+        
+        
+        update_team_query = '''
+            UPDATE turn
+            SET tn_gold = tn_gold - ?
+            WHERE tn_gameid = ?
+            AND tn_userid = ?
+            AND tn_turnnumber = ?
+        '''
+        cursor.execute(update_team_query, (cost, gameID, userID, turnnumber))
+        connection.commit()
 
     except Exception as e:
         print(e)

@@ -31,11 +31,11 @@ def createGame(player1ID, player2ID):
     shopID = str(uuid.uuid4())
 
     shopquery = '''
-        INSERT INTO shop(s_shopid, s_gameid, s_turnid)
-        VALUES(?,?,?)
+        INSERT INTO shop(s_shopid, s_gameid, s_turnid, s_playerid)
+        VALUES(?,?,?,?)
     '''
 
-    cursor.execute(shopquery, (shopID, gameID, 1))
+    cursor.execute(shopquery, (shopID, gameID, 1, player1ID))
     
     unitquery = '''
         INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
@@ -55,21 +55,21 @@ def createGame(player1ID, player2ID):
 
 
     modifierquery = '''
-        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name, m_attribute)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO modifier(m_modifierid, m_unitid, m_shopid, m_effect, m_name, m_attribute, m_cost)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     '''
 
     sample_modifiers = [
-    ("Health Boost I", 10, "HEALTH"),
-    ("Attack Boost I", 10, "ATTACK"),
-    ("Health Boost II", 20, "HEALTH"),
-    ("Attack Boost II", 20, "ATTACK"),
+    ("Health Boost I", 10, "HEALTH", 2),
+    ("Attack Boost I", 10, "ATTACK", 2),
+    ("Health Boost II", 20, "HEALTH", 3),
+    ("Attack Boost II", 20, "ATTACK", 3),
 ]
 
     for modifier in sample_modifiers:
         modifierID = str(uuid.uuid4())
-        modifierName, effect, attribute = modifier
-        cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName, attribute))
+        modifierName, effect, attribute, cost= modifier
+        cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName, attribute, cost))
 
         
     connection.commit()
