@@ -36,8 +36,7 @@ def createGame(player1ID, player2ID):
     '''
 
     cursor.execute(shopquery, (shopID, gameID, 1, player1ID))
-    shopID = str(uuid.uuid4())
-    cursor.execute(shopquery, (shopID, gameID, 1, player2ID))
+    
     
     unitquery = '''
         INSERT INTO unit(ut_name, ut_unitid, ut_shopid, ut_teamid,
@@ -73,7 +72,16 @@ def createGame(player1ID, player2ID):
         modifierName, effect, attribute, cost= modifier
         cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName, attribute, cost))
 
-        
+    shopID = str(uuid.uuid4())
+    cursor.execute(shopquery, (shopID, gameID, 1, player2ID))
+    for unit in sample_units:
+        unitid = str(uuid.uuid4())
+        unitName, gold, health, attack = unit
+        cursor.execute(unitquery, (unitName, unitid, shopID, gold, health, attack))
+    for modifier in sample_modifiers:
+        modifierID = str(uuid.uuid4())
+        modifierName, effect, attribute, cost= modifier
+        cursor.execute(modifierquery, (modifierID, unitid, shopID, effect, modifierName, attribute, cost))
     connection.commit()
     
     conn.closeConnection(connection)
