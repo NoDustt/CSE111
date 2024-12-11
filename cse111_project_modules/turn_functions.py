@@ -1,5 +1,4 @@
 import database_connection as conn
-
 def createTurn(turnNumber, gameID):
     connection = conn.databaseConnection()
     cursor = connection.cursor()

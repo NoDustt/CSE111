@@ -1,5 +1,6 @@
 import database_connection as conn
 import uuid 
+import random
 
 def createTeam(teamName, playerID, teamID, turnnumber):
     connection = conn.databaseConnection()
@@ -126,3 +127,20 @@ def getPlayerTeam(userID, gameID):
 
 
     return team_units  
+
+def populateTeamWithRandom(userID, gameID, shopID, turnNumber):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    randint = random.randint(1,4)
+    
+    query = '''
+        SELECT u_unitid
+        FROM unit
+        WHERE ut_shopid = ?
+    '''
+    
+    cursor.execute(query, (shopID,))
+    
+    result = cursor.fetchall()
+    print(result)
+    
