@@ -173,18 +173,17 @@ def dupeTeams(gameID, turnNumber):
 
     query = '''
         INSERT INTO unit (ut_name, ut_shopid, ut_gold, ut_health, ut_attack, ut_unitid, ut_teamid)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    '''
+    unitquery = '''
         SELECT 
-            u.ut_name, 
-            u.ut_shopid, 
-            u.ut_gold, 
-            u.ut_health, 
-            u.ut_attack, 
-            ?,         
-            ?           
-        FROM 
-            unit u
-        INNER JOIN 
-            team t 
+        u.ut_name, 
+        u.ut_shopid, 
+        u.ut_gold, 
+        u.ut_health, 
+        u.ut_attack
+        FROM unit u
+        INNER JOIN team t
         ON 
             u.ut_teamid = t.t_teamid
         WHERE 
@@ -194,8 +193,13 @@ def dupeTeams(gameID, turnNumber):
     '''
     a = 0
     for team in newteams:
-        unitid = str(uuid.uuid4())
-        cursor.execute(query, (unitid, team, turnNumber-1, players[a], gameID))
+        
+        units = cursor.execute(unitquery, (turnNumber-1, players[a], gameID)).fetchall()
+        for unit in units:
+            unitid = str(uuid.uuid4())
+            name, shop, cost, health, attack = unit
+            cursor.execute(query, (name, shop, cost, health, attack, unitid, team))
+            
         a = a+1
     
     connection.commit()
