@@ -91,6 +91,45 @@ def login(username, password):
         print("user has successfully logged in")
         return userid
     else: return -1
+
+def updateUserStats(userID, win_or_loss):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+
+    # Fetch current win/loss count from the database
+    cursor.execute("SELECT u_wins, u_losses, u_games FROM user WHERE u_playerid = ?", (userID,))
+    user_data = cursor.fetchone()
+    
+    if user_data:
+        # Unpack data
+        current_wins, current_losses, current_games = user_data
+        
+        # Update win or loss count based on the result of the fight
+        if win_or_loss == "win":
+            new_wins = current_wins + 1
+            new_losses = current_losses
+        elif win_or_loss == "loss":
+            new_wins = current_wins
+            new_losses = current_losses + 1
+        else:
+            # Invalid win/loss result
+            return
+        
+        # Increment the games played count
+        new_games = current_games + 1
+        
+        # Update the database with new values
+        cursor.execute("""
+            UPDATE user 
+            SET u_wins = ?, u_losses = ?, u_games = ? 
+            WHERE u_playerid = ?
+        """, (new_wins, new_losses, new_games, userID))
+        
+        # Commit changes
+        connection.commit()
+        print("User stats updated successfully.")
+    else:
+        print("User not found in the database.")
     
 def getwinslosses(userID):
     connection = conn.databaseConnection()

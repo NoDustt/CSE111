@@ -4,8 +4,8 @@ usertable = '''
         u_username VARCHAR(255) NOT NULL,
         u_playerid VARCHAR(255) NOT NULL,
         u_wins VARCHAR(255) DEFAULT 0,
-        u_losses VARCHAR(255) DEFAULT 0,
-        u_games VARCHAR(255) DEFAULT 0,
+        u_losses INT DEFAULT 0,
+        u_games INT DEFAULT 0,
         PRIMARY KEY (u_playerid, u_username)
     )
 '''
@@ -103,8 +103,8 @@ unittable = '''
         ut_shopid VARCHAR(255) NOT NULL,
         ut_teamid VARCHAR(255),
         ut_gold VARCHAR(255) NOT NULL,
-        ut_health VARCHAR(255) NOT NULL,
-        ut_attack VARCHAR(255) NOT NULL,
+        ut_health int NOT NULL,
+        ut_attack int NOT NULL,
         
         PRIMARY KEY (ut_unitid),
         FOREIGN KEY (ut_shopid) REFERENCES shop(s_shopid) ON DELETE CASCADE,
