@@ -17,17 +17,17 @@ def createGame(player1ID, player2ID):
             INSERT INTO turn(tn_turnnumber, tn_gameid, tn_userid)
             VALUES (?, ?, ?)
         '''
-    cursor.execute(turnquery, (1, gameID, player1ID))
     cursor.execute(turnquery, (1, gameID, player2ID))
+    cursor.execute(turnquery, (1, gameID, player1ID))
     teamID = str(uuid.uuid4())
 
     teamquery = '''
             INSERT INTO team(t_teamname, t_teamid, t_playerid, t_turnnumber, t_gameid)
             VALUES (?, ?, ?, ?, ?)
         '''
-    cursor.execute(teamquery, ("New Team", teamID, player1ID, 1, gameID))
-    teamID = str(uuid.uuid4())
     cursor.execute(teamquery, ("New Team", teamID, player2ID, 1, gameID))
+    teamID = str(uuid.uuid4())
+    cursor.execute(teamquery, ("New Team", teamID, player1ID, 1, gameID))
     
     shopID = str(uuid.uuid4())
 

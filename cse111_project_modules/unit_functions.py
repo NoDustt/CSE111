@@ -1,5 +1,6 @@
 import database_connection as conn
 import uuid 
+import random
 
 def createUnit(unitName, shopID, teamID, gold, health, attack):
     connection = conn.databaseConnection()
@@ -119,3 +120,22 @@ def createBotTeam(gameID, turnNumber):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
     
+    query = '''
+        SELECT ut_unitid FROM unit, shop
+        WHERE ut_shopid = s_shopid
+        AND s_turnid = ?
+        AND s_gameid = ?
+    '''
+    
+    units = cursor.execute(query, (turnNumber, gameID)).fetchall()
+    
+    newunits = random.sample(units, 3)
+    print(newunits)
+    query = '''
+        SELECT t_teamid FROM team WHERE t_turnnumber = ? AND t_gameid = ? AND t_playerid = "1"
+    '''
+    teamid = cursor.execute(query, (turnNumber, gameID)).fetchall()[0][0]
+    for unit in newunits:
+        unitid = unit[0]
+        addUnitToTeam(teamid, unitid, gameID, 1, turnNumber)
+        
