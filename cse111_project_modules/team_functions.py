@@ -2,21 +2,34 @@ import database_connection as conn
 import uuid 
 import random
 
-def createTeam(teamName, playerID, teamID, turnnumber):
+def createTeam(teamName, playerID, teamID, turnnumber, gameID):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
 
     teamID = str(uuid.uuid4())
 
     teamquery = '''
-            INSERT INTO team(t_teamname, t_teamid, t_playerid, t_turnnumber)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO team(t_teamname, t_teamid, t_playerid, t_turnnumber, t_gameid)
+            VALUES (?, ?, ?, ?, ?)
         '''
-    cursor.execute(teamquery, (teamName, teamID, playerID, teamID, turnnumber))
+    cursor.execute(teamquery, (teamName, teamID, playerID, turnnumber, gameID))
 
     connection.commit()
     conn.closeConnection(connection)
     return teamID
+
+def getPlayerTeamID(playerID, gameID, turnNumber):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    
+    query = '''
+        SELECT t_teamid FROM team
+        WHERE t_playerid = ?
+        AND t_gameid = ?
+        AND t_turnNumber = ?
+    '''
+    teamid = cursor.execute(query, (playerID, gameID, turnNumber)).fetchall()[0][0]
+    return teamid
 
 def editTeam(teamID, teamName, playerID):
     connection = conn.databaseConnection()
@@ -93,7 +106,7 @@ def deleteTeam(teamID):
     finally:
         conn.closeConnection(connection)
 
-def getPlayerTeam(userID, gameID):
+def getPlayerTeam(userID, gameID, turnNumber):
     
     connection = conn.databaseConnection()
     cursor = connection.cursor()
@@ -105,12 +118,13 @@ def getPlayerTeam(userID, gameID):
         ON ut_teamid = t_teamid
         WHERE t_playerid = ?
         AND t_gameid = ?
+        AND t_turnnumber = ?
     '''
     
-    cursor.execute(query, (userID, gameID))
+    cursor.execute(query, (userID, gameID, turnNumber))
     
     result = cursor.fetchall()
-    print("Your opponents team")
+    print("Your opponents team:")
     team_units = []  
 
     for u in result:  
@@ -144,22 +158,48 @@ def populateTeamWithRandom(userID, gameID, shopID, turnNumber):
     result = cursor.fetchall()
     print(result)
     
-# def dupeTeams(gameID, turnNumber):
-#     connection = conn.databaseConnection()
-#     cursor = connection.cursor()
+def dupeTeams(gameID, turnNumber):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+
+    query = '''
+        SELECT g_player1id, g_player2id
+        FROM game
+        WHERE g_gameid = ?
+    '''
+    players = cursor.execute(query,(gameID,)).fetchall()[0]
+    newteams = []
+    for player in players:
+        newteams += [createTeam("New Team", player, 1, turnNumber, gameID)]
+
+    query = '''
+        INSERT INTO unit (ut_name, ut_shopid, ut_gold, ut_health, ut_attack, ut_unitid, ut_teamid)
+        SELECT 
+            u.ut_name, 
+            u.ut_shopid, 
+            u.ut_gold, 
+            u.ut_health, 
+            u.ut_attack, 
+            ?,         
+            ?           
+        FROM 
+            unit u
+        INNER JOIN 
+            team t 
+        ON 
+            u.ut_teamid = t.t_teamid
+        WHERE 
+            t.t_turnnumber = ?
+            AND t.t_playerid = ?
+            AND t.t_gameid = ?
+    '''
+    a = 0
+    for team in newteams:
+        unitid = str(uuid.uuid4())
+        cursor.execute(query, (unitid, team, turnNumber-1, players[a], gameID))
+        a = a+1
     
-#     query = '''
-#         SELECT t_teamid FROM team
-#         WHERE t_gameid = ?
-#     '''
+    connection.commit()
     
-#     teams = cursor.execute(query, (gameID,)).fetchall()[0]
     
-#     query = '''
-#         SELECT ut_unitid
-#         FROM unit
-#         WHERE ut_teamid = ?
-#     '''
-#     for team in teams:
-#         units = cursor.execute(query, (team,)).fetchall()[0]
         

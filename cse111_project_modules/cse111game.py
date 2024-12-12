@@ -121,22 +121,24 @@ def playerTurn(userID, shopID, teamID, gameID, opponent):
             unit.createBotTeam(gameID, turnNumber)  
             os.system('clear')
             print("Ending turn...")
-            fightingTurn(userID, gameID, teamID)
+            fightingTurn(userID, gameID, teamID, turnNumber)
             
             turnNumber += 1
             turn.incrementTurn(gameID, turnNumber)
-            shopID = shop.genNewShops(gameID, turnNumber)
-            teamID = team.dupeTeams(gameID, turnNumber)
+            shop.genNewShops(gameID, turnNumber)
+            shopID = shop.getTurnShop(userID, gameID, turnNumber)
+            team.dupeTeams(gameID, turnNumber)
+            teamID = team.getPlayerTeamID(userID, gameID, turnNumber)
+
         elif action == "5":
             break
         else:
             print("Invalid input. Please choose a valid option.")
 
-def fightingTurn(userID, gameID, teamID):
+def fightingTurn(userID, gameID, teamID, turnNumber):
     print("Currently fighting...")
-    print("Your team: ")
     team.getTeam(teamID)
-    team.getPlayerTeam(userID, gameID)
+    team.getPlayerTeam(1, gameID, turnNumber)
     
 
 if __name__ == "__main__":
