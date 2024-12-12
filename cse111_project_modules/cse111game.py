@@ -198,7 +198,7 @@ if __name__ == "__main__":
     loggedin = False
     playing = False
     while(running):
-        selector = input("1: Create User\n2: Login User\n3: Exit\nSelect what option you want to do: ")
+        selector = input("1: Create User\n2: Login User\n3: Exit\nSelect what option you want to do:\n4: View Stats\n5:View History")
         if int(selector) == 1:
             print("Now Creating A User...")
             username = input("Enter Username: ")

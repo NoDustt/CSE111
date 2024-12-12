@@ -222,12 +222,12 @@ def printTurnTeams(gameID, userID):
     
     print("Printing shops at each turn")
     query = '''
-        SELECT s_turnnumber, ut_name, ut_health, ut_attack FROM shop, unit
+        SELECT s_turnid, ut_name, ut_health, ut_attack FROM shop, unit
         WHERE s_gameid = ?
         AND s_userid = ?
         AND ut_shopid = s_shopid
         ORDER BY s_turnid ASC
     '''
     
-    userTeams = cursor.execute(query, (gameID, userID)).fetchall()
-    print(userTeams)
+    shops = cursor.execute(query, (gameID, userID)).fetchall()
+    print(shops)
