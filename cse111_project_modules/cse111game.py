@@ -198,7 +198,7 @@ if __name__ == "__main__":
     loggedin = False
     playing = False
     while(running):
-        selector = input("1: Create User\n2: Login User\n3: Exit\nSelect what option you want to do:\n4: View Stats\n5:View History")
+        selector = input("1: Create User\n2: Login User\n3: Exit\nSelect what option you want to do:")
         if int(selector) == 1:
             print("Now Creating A User...")
             username = input("Enter Username: ")
@@ -231,10 +231,10 @@ if __name__ == "__main__":
                     game_id = result[0]
                     opponent_name = result[1]
                     print(f"{index + 1}: Game {index + 1} - Playing against {opponent_name}")
-                selector = input("Please input what you would like to do.\n1: Create A New game\n2: Resume a game\n3: Log out\nSelect what option you want to do: ")
+                selector = input("Please input what you would like to do.\n1: Create A New game\n2: Resume a game\n3: Log out\n4: View Stats\n5: View History\nSelect what option you want to do: ")
             else: 
                 print("You do not have any active games")
-                selector = input("Please input what you would like to do.\n1: Create A New game\n3: Log out\nSelect what option you want to do: ")
+                selector = input("Please input what you would like to do.\n1: Create A New game\n3: Log out\n4: View Stats\n5: View History\nSelect what option you want to do: ")
             if int(selector) == 1:
                 print("Creating a new game...")
                 gameID, shopID, teamID = game.createGame(userid, 1)
