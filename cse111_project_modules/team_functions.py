@@ -156,6 +156,7 @@ def populateTeamWithRandom(userID, gameID, shopID, turnNumber):
     cursor.execute(query, (shopID,))
     
     result = cursor.fetchall()
+    print(result)
     
 def dupeTeams(gameID, turnNumber):
     connection = conn.databaseConnection()

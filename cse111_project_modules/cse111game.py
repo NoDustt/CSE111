@@ -11,7 +11,6 @@ import os
 
 def playerTurn(userID, shopID, teamID, gameID, opponent):
     os.system('clear')
-    print(userID)
     while True:
         print(f"Game vs {opponent}")
         turnNumber = int(turn.findLatestTurn(gameID)[0][0])
@@ -205,7 +204,6 @@ if __name__ == "__main__":
                 print("Now logging out.")
                 loggedin = False
             while(playing):
-                print(userid)
                 playerTurn(userid, shopID, teamID, gameid, opponent_name)
                 playing = False
         if int(selector) == 3:
