@@ -204,9 +204,30 @@ if __name__ == "__main__":
             if int(selector) == 3:
                 print("Now logging out.")
                 loggedin = False
+            if int(selector) == 4:
+                print("now checking statistics.")
+                user.getwinslosses(userid)
+            if int(selector) == 5:
+                history = False
+                results = game.findUserGames(userid)
+                for index, result in enumerate(results):
+                    game_id = result[0]
+                    opponent_name = result[1]
+                    print(f"{index + 1}: Game {index + 1} - Playing against {opponent_name}")
+                    gameselector = input("Please the number of the game you want to look at: ")
+                    gameselector = int(gameselector) - 1
+                    if 0 <= gameselector and gameselector < len(results):
+                        gameid = results[gameselector][0]
+                        print(f"Now checking game vs {results[gameselector][1]}")
+                        print("Here are all the turns in this game:")
+                        team.printTurnTeams(gameid, userid)
+                        
+                    
+                    
             while(playing):
                 print(userid)
                 playerTurn(userid, shopID, teamID, gameid, opponent_name)
+                
                 playing = False
         if int(selector) == 3:
             print("Thanks for playing!")

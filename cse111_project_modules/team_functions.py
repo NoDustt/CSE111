@@ -205,4 +205,29 @@ def dupeTeams(gameID, turnNumber):
     connection.commit()
     
     
-        
+def printTurnTeams(gameID, userID):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    print("Printing teams at each turn")
+    query = '''
+        SELECT  t_turnnumber, ut_name, ut_health, ut_attack FROM team, unit
+        WHERE t_gameid = ?
+        AND t_playerid = ?
+        AND ut_teamid = t_teamid
+        ORDER BY t_turnnumber ASC
+    '''
+    
+    userTeams = cursor.execute(query, (gameID, userID)).fetchall()
+    print(userTeams)
+    
+    print("Printing shops at each turn")
+    query = '''
+        SELECT s_turnnumber, ut_name, ut_health, ut_attack FROM shop, unit
+        WHERE s_gameid = ?
+        AND s_userid = ?
+        AND ut_shopid = s_shopid
+        ORDER BY s_turnid ASC
+    '''
+    
+    userTeams = cursor.execute(query, (gameID, userID)).fetchall()
+    print(userTeams)

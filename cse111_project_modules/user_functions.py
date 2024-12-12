@@ -92,6 +92,18 @@ def login(username, password):
         return userid
     else: return -1
     
+def getwinslosses(userID):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    
+    query = '''
+        SELECT u_wins, u_losses, u_games FROM user WHERE u_playerid = ?
+    '''
+    
+    results = cursor.execute(query, (userID,)).fetchall()[0]
+    print(f"Wins: {results[0]}\nLosses:{results[1]}\nGames Played: {results[2]}\n")
+    conn.closeConnection(connection)
+    
 if __name__ == '__main__':
     selector = input("Select 1 for creating a user, 2 to login as a user:")
     if selector == "1":
