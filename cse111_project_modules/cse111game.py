@@ -9,6 +9,8 @@ import user_functions as user
 from getpass import getpass
 import os
 
+
+
 def playerTurn(userID, shopID, teamID, gameID, opponent):
     os.system('clear')
     print(userID)
@@ -138,8 +140,52 @@ def playerTurn(userID, shopID, teamID, gameID, opponent):
 
 def fightingTurn(userID, gameID, teamID, turnNumber):
     print("Currently fighting...")
-    team.getTeam(teamID)
-    team.getPlayerTeam(1, gameID, turnNumber)
+
+    player_team = team.getTeam(teamID)  # Player's team
+    opponent_team = team.getPlayerTeam(1, gameID, turnNumber)  # Opponent's team
+    
+    # Create temporary copies of the teams to modify during the fight
+    player_team_temp = player_team.copy()
+    opponent_team_temp = opponent_team.copy()
+
+    # Fight logic: Simulate rounds of the fight until one team is defeated
+    while True:
+        # Simulate the round of attacks: Process each unit from the player and opponent
+        for i in range(min(len(player_team_temp), len(opponent_team_temp))):
+            player_unit = player_team_temp[i]
+            opponent_unit = opponent_team_temp[i]
+            
+            opponent_unit['health'] -= player_unit['attack']
+            player_unit['health'] -= opponent_unit['attack']
+            
+            # Print out the round information
+            print(f"{player_unit['name']} attacks {opponent_unit['name']} for {player_unit['attack']} damage.")
+            print(f"{opponent_unit['name']} attacks {player_unit['name']} for {opponent_unit['attack']} damage.")
+        
+        # Check if any team is defeated (i.e., if all units in the team have zero or negative health)
+        player_team_alive = [unit for unit in player_team_temp if unit['health'] > 0]
+        opponent_team_alive = [unit for unit in opponent_team_temp if unit['health'] > 0]
+        
+        if not player_team_alive or not opponent_team_alive:
+            break
+        
+        # Continue fighting until one team is defeated
+        print("--- Round Ended ---")
+        print("Your remaining team:", player_team_alive)
+        print("Opponent's remaining team:", opponent_team_alive)
+    
+    # Determine who won the fight
+    if player_team_alive:
+        print("You win the fight!")
+        user.updateUserStats(userID, "win")  
+    else:
+        print("You lose the fight!")
+        user.updateUserStats(userID, "loss")  
+    
+    # Once the fight is over, restore the original team state 
+    player_team = team.getTeam(teamID)  
+ 
+
     
 
 if __name__ == "__main__":
