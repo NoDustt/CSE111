@@ -115,5 +115,7 @@ def deleteUnit(unitID):
         conn.closeConnection(connection)
 
 
-
+def createBotTeam(gameID, turnNumber):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
     

@@ -7,20 +7,21 @@ import turn_functions as turn
 import unit_functions as unit
 import user_functions as user
 from getpass import getpass
+import os
 
-def playerTurn(userID, shopID, teamID, gameID):
-    turnNumber = int(turn.findLatestTurn(gameID)[0][0])
-    
-    print(f"Current Turn: {turnNumber}")
-    print(f"\n=== Your Turn ===")
-    print("1. View Shop")
-    print("2. Buy Unit or Modifier")
-    print("3. View Your Team")
-    print("4. End Turn")
-
+def playerTurn(userID, shopID, teamID, gameID, opponent):
+    os.system('clear')
     while True:
-        action = input("Choose an action (1-4): ")
+        print(f"Game vs {opponent}")
+        turnNumber = int(turn.findLatestTurn(gameID)[0][0])
+        print(f"Current Turn: {turnNumber}")
+        print(f"\n=== Your Turn ===")
+        print("1. View Shop")
+        print("2. Buy Unit or Modifier")
+        print("3. View Your Team")
+        print("4. End Turn")
         gold = int(turn.getGold(gameID, turnNumber)[0][0])
+        action = input("Choose an action (1-4): ")
         if action == "1":
             print("\nAvailable units in shop:")
             units = unit.findUnit(shopID, 10)  
@@ -50,9 +51,10 @@ def playerTurn(userID, shopID, teamID, gameID):
                     print(f"Purchasing {unit_name}...")
                     # Link the unitID to the player's teamID
                     unit.addUnitToTeam(teamID, unitID, gameID, userID, turnNumber)  
-        
+                    os.system('clear')
                     print(f"{unit_name} has been added to your team!")
                 else:
+                    os.system('clear')
                     print(f"Unit {unit_name} not found in the shop.")
 
             elif buy_choice == "2":
@@ -85,16 +87,20 @@ def playerTurn(userID, shopID, teamID, gameID):
                         
                         # Apply the modifier effect to the unit
                         modifier.applyModifier(unitID, modifier_effect, modifier_attribute, cost, gameID, userID, turnNumber)
-                        print(f"{modifier_name} has been applied to {unit_name_to_apply}!")
+                        os.system('clear')
+                        print(f"{modifier_name} has been applied!")
                     else:
+                        os.system('clear')
                         print(f"Unit {unit_name_to_apply} not found in your team.")
                 else:
+                    os.system('clear')
                     print(f"Modifier {modifier_name} not found in the shop.")
 
         elif action == "3":
             # Modify team
-            # print("Your current team:")
+            os.system('clear')
             team_units = team.getTeam(teamID)  # Get the current team units
+            print()
 
             # print("Options: ")
             # print("1. Sell a unit")
@@ -112,10 +118,17 @@ def playerTurn(userID, shopID, teamID, gameID):
             #     team.rearrangeUnits(teamID)  # Implement rearranging logic
 
         elif action == "4":
+            unit.createBotTeam(gameID, turnNumber)  
+            os.system('clear')
             print("Ending turn...")
             fightingTurn(userID, gameID, teamID)
+            
+            turnNumber += 1
+            turn.incrementTurn(gameID, turnNumber)
+            shopID = shop.genNewShops(gameID, turnNumber)
+            teamID = team.dupeTeams(gameID, turnNumber)
+        elif action == "5":
             break
-
         else:
             print("Invalid input. Please choose a valid option.")
 
@@ -127,6 +140,7 @@ def fightingTurn(userID, gameID, teamID):
     
 
 if __name__ == "__main__":
+    os.system('clear')
     print("Resetting database...\n\n")
     db_creation.databaseReset()
     user.createuser("Botguy", "1")
@@ -144,6 +158,7 @@ if __name__ == "__main__":
             # userid = input("Enter A UserID: ")
             result = user.createuser(username, password)
             if result != -1:
+                os.system('clear')
                 print("Successfully created a user!")
             else:
                 print("User already exists")
@@ -154,16 +169,19 @@ if __name__ == "__main__":
             password = str(getpass())
             result = user.login(username, password)
             if result != -1:
+                os.system('clear')
                 print("Sucessfully logged in user!")
                 userid = result
                 loggedin = True
                 print("Welcome to the game!")
         while(loggedin):
-            results = game.findUserGamers(userid)
+            results = game.findUserGames(userid)
             if results != []:
                 print("Here are all your active games:")
-                for result in results:
-                    print(result[0])
+                for index, result in enumerate(results):
+                    game_id = result[0]
+                    opponent_name = result[1]
+                    print(f"{index + 1}: Game {index + 1} - Playing against {opponent_name}")
                 selector = input("Please input what you would like to do.\n1: Create A New game\n2: Resume a game\n3: Log out\nSelect what option you want to do: ")
             else: 
                 print("You do not have any active games")
@@ -172,17 +190,19 @@ if __name__ == "__main__":
                 print("Creating a new game...")
                 gameID, shopID, teamID = game.createGame(userid, 1)
             if int(selector) == 2:
-                gameid = input("Please copy paste or enter the game you want to choose:\n")
-                gamesearch = (gameid,)
-                if gamesearch in results:
-                    print("Now playing a game!")
+                gameselector = input("Please enter the number of the game you want to choose:\n")
+                gameselector = int(gameselector) - 1
+                if 0 <= gameselector and gameselector < len(results):
+                    gameid = results[gameselector][0]
+                    print(f"Now playing vs {results[gameselector][1]}")
                     playing = True
-                    playerTurn(userid, shopID, teamID, gameid)
+                else:
+                    print("Invalid game selection")
             if int(selector) == 3:
                 print("Now logging out.")
                 loggedin = False
             while(playing):
-                print("Playing game!")
+                playerTurn(userid, shopID, teamID, gameid, opponent_name)
                 playing = False
         if int(selector) == 3:
             print("Thanks for playing!")

@@ -46,10 +46,37 @@ def findShop(gameID):
             WHERE s_gameid = ?
         '''
         cursor.execute(findshop, (gameID,))
-        return cursor.fetchone()
+        return cursor.fetchall()
     except Exception as e:
         print(f"Error deleting unit: {e}")
         connection.rollback()
     finally:
         conn.closeConnection(connection)
-            
+        
+        
+def genNewShops(gameID, turnNumber):
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    query = '''
+        SELECT g_player1id, g_player2id
+        FROM game
+        WHERE g_gameid = ?
+    '''
+    players = cursor.execute(query,(gameID,)).fetchall()[0]
+    
+    if not players:
+        print("Failed to increment turn")
+    
+    shopquery = '''
+        INSERT INTO shop(s_shopid, s_gameid, s_turnid, s_userid)
+        VALUES(?,?,?,?)
+    '''
+
+    
+    
+    for player in players:
+        shopid = str(uuid.uuid4())
+        cursor.execute(shopquery, (shopid, gameID, turnNumber, player))
+    
+    connection.commit()
+    conn.closeConnection(connection)

@@ -1,13 +1,13 @@
 import database_connection as conn
-def createTurn(turnNumber, gameID):
+def createTurn(turnNumber, gameID, tn_gold, tn_userid):
     connection = conn.databaseConnection()
     cursor = connection.cursor()
 
     turnquery = '''
-            INSERT INTO turn(tn_turnnumber, tn_gameid)
-            VALUES (?, ?)
+            INSERT INTO turn(tn_turnnumber, tn_gameid, tn_gold, tn_userid)
+            VALUES (?, ?, ?, ?)
         '''
-    cursor.execute(turnquery, (turnNumber, gameID))
+    cursor.execute(turnquery, (turnNumber, gameID, tn_gold, tn_userid))
 
     connection.commit()
     conn.closeConnection(connection)
@@ -48,3 +48,28 @@ def getGold(gameID, turnNumber):
     results = cursor.fetchall()
     
     return results
+
+def incrementTurn(gameID, turnNumber):
+    gold = max(3, turnNumber)
+    connection = conn.databaseConnection()
+    cursor = connection.cursor()
+    query = '''
+        SELECT g_player1id, g_player2id
+        FROM game
+        WHERE g_gameid = ?
+    '''
+    players = cursor.execute(query,(gameID,)).fetchall()[0]
+    
+    if not players:
+        print("Failed to increment turn")
+        
+    query = '''
+        INSERT INTO turn(tn_turnnumber, tn_gameid, tn_gold, tn_userid)
+        VALUES (?, ?, ?, ?)
+    '''
+    
+    for player in players:
+        cursor.execute(query, (turnNumber, gameID, gold, player))
+    
+    connection.commit()
+    conn.closeConnection(connection)
