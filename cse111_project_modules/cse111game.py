@@ -23,6 +23,7 @@ def playerTurn(userID, shopID, teamID, gameID, opponent):
         print("2. Buy Unit or Modifier")
         print("3. View Your Team")
         print("4. End Turn")
+        print("5. Leave Game")
         gold = int(turn.getGold(gameID, turnNumber)[0][0])
         action = input("Choose an action (1-4): ")
         if action == "1":
